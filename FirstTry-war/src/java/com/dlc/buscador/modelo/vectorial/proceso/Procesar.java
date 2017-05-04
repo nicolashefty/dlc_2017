@@ -38,9 +38,8 @@ public class Procesar
     public void actualizar()
     {
         int N = documentos.size();
-        for (Map.Entry<String, String> entry : palabras_afectadas.entrySet())
+        palabras_afectadas.entrySet().stream().map((entry) -> entry.getKey()).forEachOrdered((palabra) ->
         {
-            String palabra = entry.getKey();
             Vocabulario vocabulario = vocabularios.get(palabra);
             ArrayList<Posteo> posteos_voc = posteos.get(palabra);
             int max_tf = vocabulario.getMax_tf();
@@ -55,23 +54,13 @@ public class Procesar
 
             vocabulario.setMax_tf(max_tf);
 
-            Collections.sort(posteos_voc, new Comparator<Posteo>()
-                     {
-                         @Override
-                         public int compare(Posteo p1, Posteo p2)
-                         {
-                             return p2.getTf() - p1.getTf();
-                         }
+            Collections.sort(posteos_voc, (Posteo p1, Posteo p2) -> p2.getTf() - p1.getTf());
+        });
 
-                     });
-        }
-
-        for (Map.Entry<String, Vocabulario> entry : vocabularios.entrySet())
+        vocabularios.entrySet().stream().map((entry) -> entry.getValue()).forEachOrdered((vocabulario) ->
         {
-            Vocabulario vocabulario = entry.getValue();
-
             vocabulario.setN(N);
-        }
+        });
 
         palabras_afectadas = null;
     }
@@ -82,7 +71,7 @@ public class Procesar
         String texto = Leer.getTexto(archivo);
         String documento = archivo.getName();
 
-        if (texto == null || texto == "")
+        if (texto == null || "".equals(texto))
         {
             return;
         }
@@ -104,7 +93,7 @@ public class Procesar
         {
             String palabra = palabras[i];
 
-            if (palabra.trim() == "")
+            if ("".equals(palabra.trim()))
             {
                 continue;
             }

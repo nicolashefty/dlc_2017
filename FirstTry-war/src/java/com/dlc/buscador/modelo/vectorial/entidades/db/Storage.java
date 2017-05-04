@@ -14,7 +14,9 @@ public class Storage
 
     private static final String DB_DRIVER = "org.sqlite.JDBC";
 
-    private static final String DB_CONNECTION = "jdbc:derby://localhost:1527/dbDLC";
+//    private static final String DB_CONNECTION = "jdbc:derby://localhost:1527/dbDLC";
+    private static final String DB_CONNECTION = "jdbc:mysql://localhost:3306/dbdlc";
+    
 
     private static HashMap<String, Vocabulario> vocabularios_cache = new HashMap<>();
 
@@ -83,7 +85,7 @@ public class Storage
 
             return vocabularios;
         }
-        catch (Exception ex)
+        catch (SQLException ex)
         {
             return vocabularios;
         }
@@ -132,7 +134,7 @@ public class Storage
                         error = true;
                     }
                 }
-                catch (Exception ex)
+                catch (SQLException ex)
                 {
                     error = true;
                 }
@@ -149,7 +151,7 @@ public class Storage
 
             con.setAutoCommit(true);
         }
-        catch (Exception ex)
+        catch (SQLException ex)
         {
 
             try
@@ -173,7 +175,7 @@ public class Storage
                 }
                 con.close();
             }
-            catch (Exception ex)
+            catch (SQLException ex)
             {
             }
         }
@@ -218,7 +220,7 @@ public class Storage
 
             return posteos;
         }
-        catch (Exception ex)
+        catch (SQLException ex)
         {
             return posteos;
         }
@@ -259,7 +261,7 @@ public class Storage
 
             return posteos;
         }
-        catch (Exception ex)
+        catch (SQLException ex)
         {
             return posteos;
         }
@@ -318,7 +320,7 @@ public class Storage
                             error = true;
                         }
                     }
-                    catch (Exception ex)
+                    catch (SQLException ex)
                     {
                         error = true;
                     }
@@ -337,7 +339,7 @@ public class Storage
 
             con.setAutoCommit(true);
         }
-        catch (Exception ex)
+        catch (SQLException ex)
         {
 
             try
@@ -361,7 +363,7 @@ public class Storage
                 }
                 con.close();
             }
-            catch (Exception ex)
+            catch (SQLException ex)
             {
             }
         }
@@ -400,7 +402,7 @@ public class Storage
 
             return documentos;
         }
-        catch (Exception ex)
+        catch (SQLException ex)
         {
             return documentos;
         }
@@ -447,7 +449,7 @@ public class Storage
                         error = true;
                     }
                 }
-                catch (Exception ex)
+                catch (SQLException ex)
                 {
                     error = true;
                 }
@@ -464,7 +466,7 @@ public class Storage
 
             con.setAutoCommit(true);
         }
-        catch (Exception ex)
+        catch (SQLException ex)
         {
 
             try
@@ -488,7 +490,7 @@ public class Storage
                 }
                 con.close();
             }
-            catch (Exception ex)
+            catch (SQLException ex)
             {
             }
         }
