@@ -10,18 +10,18 @@ import javax.swing.filechooser.*;
  *
  * @author nicolashefty
  */
-public class Testing extends javax.swing.JFrame
+public class Indexado extends javax.swing.JFrame
 {
 
     /**
      * Creates new form Testing
      */
-    public Testing()
+    public Indexado()
     {
         initComponents();
     }
 
-    ArrayList<File> Archivos = new ArrayList<>();
+    ArrayList<File> listaArchivos = new ArrayList<>();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -39,7 +39,7 @@ public class Testing extends javax.swing.JFrame
         barra_porcentaje = new javax.swing.JProgressBar();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        ListadoArchivos = new javax.swing.JList();
+        listadoArchivos = new javax.swing.JList();
         btn_agregar_archivo = new javax.swing.JButton();
         btn_salir = new javax.swing.JButton();
         btn_procesar = new javax.swing.JButton();
@@ -59,11 +59,11 @@ public class Testing extends javax.swing.JFrame
 
         mensaje_estado.setText("Sin comenzar.");
 
-        jLabel1.setText("Listado de archivos a analizar");
+        jLabel1.setText("Archivos a indexar");
 
-        ListadoArchivos.setModel(new DefaultListModel());
-        ListadoArchivos.setToolTipText("");
-        jScrollPane1.setViewportView(ListadoArchivos);
+        listadoArchivos.setModel(new DefaultListModel());
+        listadoArchivos.setToolTipText("");
+        jScrollPane1.setViewportView(listadoArchivos);
 
         btn_agregar_archivo.setText("Agregar archivo");
         btn_agregar_archivo.addActionListener(new java.awt.event.ActionListener()
@@ -126,18 +126,17 @@ public class Testing extends javax.swing.JFrame
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel1))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(btn_agregar_archivo)
-                                    .addComponent(mensaje_estado))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_procesar))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btn_agregar_archivo)
+                            .addComponent(mensaje_estado))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btn_procesar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(barra_porcentaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(39, 39, 39)
                         .addComponent(btn_limpiar)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addComponent(btn_salir)
@@ -152,7 +151,7 @@ public class Testing extends javax.swing.JFrame
     }//GEN-LAST:event_btn_limpiarActionPerformed
 
     private void btn_agregar_archivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregar_archivoActionPerformed
-        AgregarArchivoALista();
+        agregarArchivoALista();
     }//GEN-LAST:event_btn_agregar_archivoActionPerformed
 
     private void btn_salirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_salirActionPerformed
@@ -162,9 +161,9 @@ public class Testing extends javax.swing.JFrame
     private void btn_procesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_procesarActionPerformed
         // TODO add your handling code here:
 
-        if (Archivos.isEmpty())
+        if (listaArchivos.isEmpty())
         {
-            JOptionPane.showMessageDialog(null, "Es necesario seleccionar al menos un archivo a analizar. ");
+            JOptionPane.showMessageDialog(null, "Es necesario seleccionar al menos un archivo a indexar. ");
             return;
         }
 
@@ -179,13 +178,13 @@ public class Testing extends javax.swing.JFrame
 
                 Procesar procesar = new Procesar();
 
-                for (File archivo : Archivos)
+                for (File archivo : listaArchivos)
                 {
-                    int porcentaje = procesado * 80 / Archivos.size();
+                    int porcentaje = procesado * 80 / listaArchivos.size();
 
                     String name = archivo.getName();
 
-                    mensaje_estado.setText("Procesando " + name + " ....");
+                    mensaje_estado.setText("Indexando " + name + " ....");
                     barra_porcentaje.setValue(porcentaje);
 
                     try
@@ -241,12 +240,12 @@ public class Testing extends javax.swing.JFrame
 
     private void limpiarArchivos()
     {
-        Archivos.clear();
-        DefaultListModel ls = (DefaultListModel) ListadoArchivos.getModel();
+        listaArchivos.clear();
+        DefaultListModel ls = (DefaultListModel) listadoArchivos.getModel();
         ls.clear();
     }
 
-    private void AgregarArchivoALista()
+    private void agregarArchivoALista()
     {
         JFileChooser selector = new JFileChooser();
         selector.setMultiSelectionEnabled(true);
@@ -265,8 +264,8 @@ public class Testing extends javax.swing.JFrame
 
         for (File file : files)
         {
-            Archivos.add(file);
-            DefaultListModel ls = (DefaultListModel) ListadoArchivos.getModel();
+            listaArchivos.add(file);
+            DefaultListModel ls = (DefaultListModel) listadoArchivos.getModel();
 
             ls.addElement(file.getName());
         }
@@ -307,20 +306,21 @@ public class Testing extends javax.swing.JFrame
         }
         catch (ClassNotFoundException ex)
         {
-            java.util.logging.Logger.getLogger(Testing.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Indexado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         catch (InstantiationException ex)
         {
-            java.util.logging.Logger.getLogger(Testing.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Indexado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         catch (IllegalAccessException ex)
         {
-            java.util.logging.Logger.getLogger(Testing.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Indexado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         catch (javax.swing.UnsupportedLookAndFeelException ex)
         {
-            java.util.logging.Logger.getLogger(Testing.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Indexado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /*
@@ -330,14 +330,13 @@ public class Testing extends javax.swing.JFrame
         {
             public void run()
             {
-                new Testing().setVisible(true);
+                new Indexado().setVisible(true);
             }
 
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JList ListadoArchivos;
     private javax.swing.JProgressBar barra_porcentaje;
     private javax.swing.JButton btn_agregar_archivo;
     private javax.swing.JButton btn_limpiar;
@@ -346,6 +345,7 @@ public class Testing extends javax.swing.JFrame
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JList listadoArchivos;
     private javax.swing.JLabel mensaje_estado;
     // End of variables declaration//GEN-END:variables
 }
