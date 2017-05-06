@@ -40,11 +40,12 @@ public class Storage
                 _connection = null;
             }
 
+            Class.forName("com.mysql.jdbc.Driver"); 
             _connection = DriverManager.getConnection(DB_CONNECTION, "dlcuser", "dlcpwd");
 
             return _connection;
         }
-        catch (SQLException ex)
+        catch (SQLException | ClassNotFoundException ex)
         {
             return null;
         }
