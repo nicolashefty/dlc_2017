@@ -4,6 +4,7 @@ import com.dlc.buscador.modelo.vectorial.entidades.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import javax.sql.*;
 
 /**
  *
@@ -12,11 +13,9 @@ import java.util.*;
 public class Storage
 {
 
-    private static final String DB_DRIVER = "org.sqlite.JDBC";
+    private static final String DB_DRIVER = "com.mysql.jdbc.Driver";
 
-//    private static final String DB_CONNECTION = "jdbc:derby://localhost:1527/dbDLC";
     private static final String DB_CONNECTION = "jdbc:mysql://localhost:3306/dbdlc";
-    
 
     private static HashMap<String, Vocabulario> vocabularios_cache = new HashMap<>();
 
@@ -29,6 +28,29 @@ public class Storage
     //////////////////////////////
     private static Connection getConnection()
     {
+//         try
+//        {
+//            if (_connection != null && !_connection.isClosed())
+//            {
+//                return _connection;
+//            }
+//            else
+//            {
+//                _connection = null;
+//            }
+//
+//            Database db = new Database();
+//            DataSource dataSource = db.getConnection();
+//            if (dataSource != null)
+//            {
+//                _connection = dataSource.getConnection();
+//            }
+//            return _connection;
+//        }
+//        catch (SQLException ex)
+//        {
+//            return null;
+//        }
         try
         {
             if (_connection != null && !_connection.isClosed())
@@ -40,7 +62,7 @@ public class Storage
                 _connection = null;
             }
 
-            Class.forName("com.mysql.jdbc.Driver"); 
+            Class.forName(DB_DRIVER);
             _connection = DriverManager.getConnection(DB_CONNECTION, "dlcuser", "dlcpwd");
 
             return _connection;
@@ -86,7 +108,7 @@ public class Storage
 
             return vocabularios;
         }
-        catch (SQLException ex)
+        catch (Exception ex)
         {
             return vocabularios;
         }
@@ -135,8 +157,9 @@ public class Storage
                         error = true;
                     }
                 }
-                catch (SQLException ex)
+                catch (Exception ex)
                 {
+//                    ex.printStackTrace();
                     error = true;
                 }
             }
@@ -152,7 +175,7 @@ public class Storage
 
             con.setAutoCommit(true);
         }
-        catch (SQLException ex)
+        catch (Exception ex)
         {
 
             try
@@ -176,7 +199,7 @@ public class Storage
                 }
                 con.close();
             }
-            catch (SQLException ex)
+            catch (Exception ex)
             {
             }
         }
@@ -221,7 +244,7 @@ public class Storage
 
             return posteos;
         }
-        catch (SQLException ex)
+        catch (Exception ex)
         {
             return posteos;
         }
@@ -262,7 +285,7 @@ public class Storage
 
             return posteos;
         }
-        catch (SQLException ex)
+        catch (Exception ex)
         {
             return posteos;
         }
@@ -321,7 +344,7 @@ public class Storage
                             error = true;
                         }
                     }
-                    catch (SQLException ex)
+                    catch (Exception ex)
                     {
                         error = true;
                     }
@@ -340,7 +363,7 @@ public class Storage
 
             con.setAutoCommit(true);
         }
-        catch (SQLException ex)
+        catch (Exception ex)
         {
 
             try
@@ -364,7 +387,7 @@ public class Storage
                 }
                 con.close();
             }
-            catch (SQLException ex)
+            catch (Exception ex)
             {
             }
         }
@@ -403,7 +426,7 @@ public class Storage
 
             return documentos;
         }
-        catch (SQLException ex)
+        catch (Exception ex)
         {
             return documentos;
         }
@@ -450,7 +473,7 @@ public class Storage
                         error = true;
                     }
                 }
-                catch (SQLException ex)
+                catch (Exception ex)
                 {
                     error = true;
                 }
@@ -467,7 +490,7 @@ public class Storage
 
             con.setAutoCommit(true);
         }
-        catch (SQLException ex)
+        catch (Exception ex)
         {
 
             try
@@ -491,7 +514,7 @@ public class Storage
                 }
                 con.close();
             }
-            catch (SQLException ex)
+            catch (Exception ex)
             {
             }
         }
