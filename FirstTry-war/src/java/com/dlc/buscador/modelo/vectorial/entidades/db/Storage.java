@@ -346,6 +346,8 @@ public class Storage
                     }
                     catch (Exception ex)
                     {
+                        System.out.println("There was an error");
+                        ex.printStackTrace();
                         error = true;
                     }
                 }

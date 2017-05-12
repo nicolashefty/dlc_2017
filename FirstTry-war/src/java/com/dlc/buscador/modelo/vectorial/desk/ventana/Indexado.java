@@ -196,6 +196,7 @@ public class Indexado extends javax.swing.JFrame
                         JOptionPane.showMessageDialog(null, "Error al analizar los archivos. Proceso abortado. ");
                         JOptionPane.showMessageDialog(null, "Fallo el archivo " + name);
 
+                        e.printStackTrace();
                         System.out.println(e.getMessage());
                         System.out.println(Arrays.toString(e.getStackTrace()));
 

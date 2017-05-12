@@ -105,6 +105,11 @@ public class Procesar
 
             Vocabulario vocabulario = vocabularios.get(palabra);
             ArrayList<Posteo> posteos_voc = posteos.get(palabra);
+            if (posteos_voc == null)
+            {
+                posteos_voc = new ArrayList<>();
+                posteos.put(palabra, posteos_voc);
+            }
             Posteo posteo_doc = palabras_documento.get(palabra);
 
             if (vocabulario == null)
