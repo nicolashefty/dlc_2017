@@ -53,6 +53,7 @@ public class Procesar
             }
 
             vocabulario.setMax_tf(max_tf);
+            vocabulario.setModificado(!vocabulario.esNuevo());
 
             Collections.sort(posteos_voc, (Posteo p1, Posteo p2) -> p2.getTf() - p1.getTf());
         });
@@ -60,6 +61,7 @@ public class Procesar
         vocabularios.entrySet().stream().map((entry) -> entry.getValue()).forEachOrdered((vocabulario) ->
         {
             vocabulario.setN(N);
+            vocabulario.setModificado(!vocabulario.esNuevo());
         });
 
         palabras_afectadas = null;
@@ -115,11 +117,13 @@ public class Procesar
             if (vocabulario == null)
             {
                 Vocabulario vocabulario_nuevo = new Vocabulario(palabra);
+                vocabulario_nuevo.setNuevo(true);
                 Posteo posteo = new Posteo(documento);
                 ArrayList<Posteo> listado_posteos = new ArrayList<>();
                 String contexto = getContexto(i, c, palabras, 10);
 
                 posteo.setContexto(contexto);
+                posteo.setNuevo(true);
                 listado_posteos.add(posteo);
 
                 posteos.put(palabra, listado_posteos);
@@ -132,8 +136,10 @@ public class Procesar
                 String contexto = getContexto(i, c, palabras, 5);
                 Posteo posteo = new Posteo(documento);
                 posteo.setContexto(contexto);
+                posteo.setNuevo(true);
 
                 vocabulario.sumarDocumento();
+                vocabulario.setModificado(true);
                 posteos_voc.add(posteo);
                 palabras_documento.put(palabra, posteo);
             }
@@ -142,6 +148,7 @@ public class Procesar
                 String contexto = getContexto(i, c, palabras, 5);
                 posteo_doc.sumarTf();
                 posteo_doc.setContexto(contexto);
+                posteo_doc.setModificado(true);
             }
         }
 

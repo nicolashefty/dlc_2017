@@ -14,6 +14,10 @@ public class Posteo implements Serializable
     private int tf; // Frecuencia de aparicion en el documento
 
     private String contexto;
+    
+    private boolean modificado = false;
+    
+    private boolean nuevo = false;
 
     public Posteo(String documento)
     {
@@ -75,4 +79,21 @@ public class Posteo implements Serializable
         this.contexto = contexto;
     }
 
+    public boolean estaModificado() {
+        return modificado;
+    }
+
+    public void setModificado(boolean modificado) {
+        this.modificado = modificado;
+    }
+
+    public boolean esNuevo() {
+        return nuevo;
+    }
+
+    public void setNuevo(boolean nuevo) {
+        this.nuevo = nuevo;
+    }
+
+    
 }

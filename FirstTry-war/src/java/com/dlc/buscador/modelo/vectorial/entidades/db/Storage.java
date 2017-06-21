@@ -74,6 +74,51 @@ public class Storage
     }
 
     //////////////////////////////
+    
+    public static Vocabulario materializarVocabulario(String vocabulario)
+    {
+        Connection con = getConnection();
+        if (vocabularios_cache.size() > 0
+            && vocabularios_cache.containsKey(vocabulario)
+            && vocabularios_cache.get(vocabulario) != null)
+        {
+            return vocabularios_cache.get(vocabulario);
+        }
+
+        Vocabulario voc = null;
+
+        if (con == null)
+        {
+            new NullPointerException("Connection to DB is NULL").printStackTrace();
+            return voc;
+        }
+
+        try
+        {
+            PreparedStatement st = con.prepareStatement("SELECT * FROM vocabulario WHERE vocabulario=?");
+            st.setString(1, vocabulario);
+            ResultSet rs = st.executeQuery();
+
+            while (rs.next())
+            {
+                String vocabul = rs.getString("vocabulario");
+                int nr = rs.getInt("nr");
+                int n = rs.getInt("n");
+                int tf = rs.getInt("tf");
+
+                voc = new Vocabulario(vocabul, nr, n, tf);
+                vocabularios_cache.put(vocabul, voc);
+                return voc;
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return voc;
+    }
+    
+    
     public static HashMap<String, Vocabulario> materializarVocabulario()
     {
         Connection con = getConnection();
@@ -133,10 +178,9 @@ public class Storage
             con.setAutoCommit(false);
 
             Statement st_delete = con.createStatement();
-            st_delete.executeUpdate("DELETE FROM vocabulario");
+//            st_delete.executeUpdate("DELETE FROM vocabulario");
 
-            st = con.prepareStatement("INSERT INTO vocabulario (vocabulario,nr,n,tf) VALUES  (?,?,?,?)");
-
+            
             for (Vocabulario v : vocabularios.values())
             {
                 if (error)
@@ -144,10 +188,33 @@ public class Storage
                     break;
                 }
 
-                st.setString(1, v.getVocabulario());
-                st.setInt(2, v.getNr());
-                st.setInt(3, v.getN());
-                st.setInt(4, v.getMax_tf());
+                if (v.esNuevo())
+                {
+                    st = con.prepareStatement("INSERT INTO vocabulario (vocabulario,nr,n,tf) VALUES  (?,?,?,?)");
+
+                    st.setString(1, v.getVocabulario());
+                    st.setInt(2, v.getNr());
+                    st.setInt(3, v.getN());
+                    st.setInt(4, v.getMax_tf());
+                }
+                else if (v.estaModificado())
+                {
+                    st = con.prepareStatement("UPDATE vocabulario SET nr = ?, n = ?, tf = ? WHERE vocabulario = ?");
+                    st.setInt(1, v.getNr());
+                    st.setInt(2, v.getN());
+                    st.setInt(3, v.getMax_tf());
+                    st.setString(4, v.getVocabulario());
+                
+                }
+                else 
+                {
+                    st = con.prepareStatement("INSERT INTO vocabulario (vocabulario,nr,n,tf) VALUES  (?,?,?,?)");
+
+                    st.setString(1, v.getVocabulario());
+                    st.setInt(2, v.getNr());
+                    st.setInt(3, v.getN());
+                    st.setInt(4, v.getMax_tf());
+                }
 
                 try
                 {
@@ -155,6 +222,11 @@ public class Storage
                     if (resultado == 0)
                     {
                         error = true;
+                    }
+                    else
+                    {
+                        v.setModificado(false);
+                        v.setNuevo(false);
                     }
                 }
                 catch (Exception ex)
@@ -310,9 +382,8 @@ public class Storage
             con.setAutoCommit(false);
 
             Statement st_delete = con.createStatement();
-            st_delete.executeUpdate("DELETE FROM posteo");
+//            st_delete.executeUpdate("DELETE FROM posteo");
 
-            st = con.prepareStatement("INSERT INTO posteo (documento,palabra,tf,contexto) VALUES  (?,?,?,?)");
 
             for (Map.Entry<String, ArrayList<Posteo>> entry : posteos.entrySet())
             {
@@ -331,10 +402,28 @@ public class Storage
                         break;
                     }
 
-                    st.setString(1, posteo.getDocumento());
-                    st.setString(2, palabra);
-                    st.setInt(3, posteo.getTf());
-                    st.setString(4, posteo.getContexto());
+                    if (posteo.esNuevo()){
+
+                        st = con.prepareStatement("INSERT INTO posteo (documento,palabra,tf,contexto) VALUES  (?,?,?,?)");
+                        st.setString(1, posteo.getDocumento());
+                        st.setString(2, palabra);
+                        st.setInt(3, posteo.getTf());
+                        st.setString(4, posteo.getContexto());
+                    }
+                    else if (posteo.estaModificado()) {
+                        st = con.prepareStatement("UPDATE posteo SET tf = ? WHERE documento = ? AND palabra = ?");
+                        st.setInt(1, posteo.getTf());
+                        st.setString(2, posteo.getDocumento());
+                        st.setString(3, palabra);
+                    }
+                    else
+                    {
+                        st = con.prepareStatement("INSERT INTO posteo (documento,palabra,tf,contexto) VALUES  (?,?,?,?)");
+                        st.setString(1, posteo.getDocumento());
+                        st.setString(2, palabra);
+                        st.setInt(3, posteo.getTf());
+                        st.setString(4, posteo.getContexto());
+                    }
 
                     try
                     {
@@ -342,6 +431,11 @@ public class Storage
                         if (resultado == 0)
                         {
                             error = true;
+                        }
+                        else
+                        {
+                            posteo.setModificado(false);
+                            posteo.setNuevo(false);
                         }
                     }
                     catch (Exception ex)
@@ -434,6 +528,44 @@ public class Storage
         }
     }
 
+    public static boolean estaDocumentoProcesado(String nombreDoc)
+    {
+        Connection con = getConnection();
+        HashMap<String, String> documentos = new HashMap<>();
+
+        if (documentos_cache.size() > 0
+            && documentos_cache.containsKey(nombreDoc)
+            && documentos_cache.get(nombreDoc) != null)
+        {
+            return true;
+        }
+
+        if (con == null)
+        {
+            new NullPointerException("DB Connection is NULL").printStackTrace();
+            return false;
+        }
+
+        try
+        {
+            PreparedStatement st = con.prepareStatement("SELECT * FROM documento WHERE nombre=?");
+            st.setString(1, nombreDoc);
+//            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery();
+
+            while (rs.next())
+            {
+                return true;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+    
     public static void desmaterializarDocumentos(HashMap<String, String> documentos) throws IOException
     {
         Connection con = getConnection();
@@ -494,7 +626,7 @@ public class Storage
         }
         catch (Exception ex)
         {
-
+            ex.printStackTrace();
             try
             {
                 if (!con.isClosed())
@@ -504,6 +636,7 @@ public class Storage
             }
             catch (SQLException ex1)
             {
+                ex1.printStackTrace();
             }
         }
         finally
@@ -518,6 +651,7 @@ public class Storage
             }
             catch (Exception ex)
             {
+                ex.printStackTrace();
             }
         }
 

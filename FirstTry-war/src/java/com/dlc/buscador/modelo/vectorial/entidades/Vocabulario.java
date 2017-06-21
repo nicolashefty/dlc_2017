@@ -18,6 +18,10 @@ public class Vocabulario implements Serializable
     private int N; // Cantidad de documentos base
 
     private int max_tf; // Frecuencia de aparicion maxima en algun documento
+    
+    private boolean modificado = false;
+    
+    private boolean nuevo = false;
 
     public Vocabulario(String vocabulario)
     {
@@ -76,6 +80,22 @@ public class Vocabulario implements Serializable
     public double getIdf()
     {
         return Math.log10((double) N / (double) nr);
+    }
+
+    public boolean estaModificado() {
+        return modificado;
+    }
+
+    public void setModificado(boolean modificado) {
+        this.modificado = modificado;
+    }
+
+    public boolean esNuevo() {
+        return nuevo;
+    }
+
+    public void setNuevo(boolean nuevo) {
+        this.nuevo = nuevo;
     }
 
     @Override
